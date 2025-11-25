@@ -19,7 +19,13 @@
 		"enabled": true,
 		"indentStyle": "tab"
 	},
-	"assist": { "actions": { "source": { "organizeImports": "on" } } },
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
+	},
 	"linter": {
 		"enabled": true,
 		"rules": {
@@ -45,7 +51,11 @@
 	},
 	"overrides": [
 		{
-			"includes": ["**/*.svelte", "**/*.astro", "**/*.vue"],
+			"includes": [
+				"**/*.svelte",
+				"**/*.astro",
+				"**/*.vue"
+			],
 			"linter": {
 				"rules": {
 					"style": {

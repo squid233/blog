@@ -1,11 +1,10 @@
 ---
-import type { CollectionEntry } from "astro:content";
 import { getPostUrlBySlug } from "@utils/url-utils";
-import PostCard from "./PostCard.astro";
 import type { PostInfo } from "@/types/database";
+import PostCard from "./PostCard.astro";
 
 interface Props {
-    posts: PostInfo[];
+	posts: PostInfo[];
 }
 const { posts } = Astro.props;
 

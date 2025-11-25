@@ -1,24 +1,42 @@
 ---
-
-import { getEntry, render } from "astro:content";
 import Markdown from "@components/misc/Markdown.astro";
+import {
+	type MarkdownToHtmlResult,
+	markdownToHtml,
+} from "@/lib/markdown-to-html";
+import { supabase } from "@/lib/supabase";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
 
-const aboutPost = await getEntry("spec", "about");
+/*const aboutPost = await getEntry("spec", "about");
 
 if (!aboutPost) {
 	throw new Error("About page content not found");
 }
 
-const { Content } = await render(aboutPost);
+const { Content } = await render(aboutPost);*/
+
+const { data: aboutPost, error } = await supabase
+	.from("spec")
+	.select("*")
+	.eq("slug", "about")
+	.limit(1)
+	.single();
+
+if (error) {
+	console.error("Error fetching about page content:", error.message);
+}
+
+const renderResult: MarkdownToHtmlResult =
+	aboutPost && (await markdownToHtml(aboutPost.body));
 ---
 <MainGridLayout title={i18n(I18nKey.about)} description={i18n(I18nKey.about)}>
     <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32">
         <div class="card-base z-10 px-9 py-6 relative w-full ">
             <Markdown class="mt-2">
-                <Content />
+                {/*<Content />*/}
+                <Fragment set:html={renderResult?.html || '<p class="text-red-500">无法加载关于页面内容。</p>'} />
             </Markdown>
         </div>
     </div>

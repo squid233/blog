@@ -1,16 +1,22 @@
 ---
-export const prerender = false;
+import Markdown from "@components/misc/Markdown.astro";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
 ---
 
 <MainGridLayout title="注册">
-  <h1>注册</h1>
-  <p>已经有一个账号? <a href="/signin">登录</a></p>
-  <form action="/api/auth/register" method="post">
-    <label for="email">邮箱</label>
-    <input type="email" name="email" id="email" />
-    <label for="password">密码</label>
-    <input type="password" name="password" id="password" />
-    <button type="submit">注册</button>
-  </form>
+  <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32">
+      <div class="card-base z-10 px-9 py-6 relative w-full ">
+        <Markdown class="mt-2">
+          <h1>注册</h1>
+          <p>已经有一个账号? <a href="/signin">登录</a></p>
+          <form action="/api/auth/register" method="post">
+            <label for="email">邮箱</label>
+            <input type="email" name="email" id="email" autocomplete="email" />
+            <label for="password">密码</label>
+            <input type="password" name="password" id="password" autocomplete="new-password" />
+            <button type="submit" class="btn-regular scale-animation rounded-lg w-20 h-12">注册</button>
+          </form>
+        </Markdown>
+      </div>
+  </div>
 </MainGridLayout>
