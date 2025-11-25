@@ -1,20 +1,20 @@
 <script lang="ts">
+import type { PostForList } from "@utils/content-utils";
 import { onMount } from "svelte";
-
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 import { getPostUrlBySlug } from "../utils/url-utils";
 
 export let tags: string[];
 export let categories: string[];
-export let sortedPosts: Post[] = [];
+export let sortedPosts: PostForList[] = [];
 
 const params = new URLSearchParams(window.location.search);
 tags = params.has("tag") ? params.getAll("tag") : [];
 categories = params.has("category") ? params.getAll("category") : [];
 const uncategorized = params.get("uncategorized");
 
-interface Post {
+/*interface Post {
 	slug: string;
 	data: {
 		title: string;
@@ -22,11 +22,11 @@ interface Post {
 		category?: string;
 		published: Date;
 	};
-}
+}*/
 
 interface Group {
 	year: number;
-	posts: Post[];
+	posts: PostForList[];
 }
 
 let groups: Group[] = [];
@@ -42,36 +42,35 @@ function formatTag(tagList: string[]) {
 }
 
 onMount(async () => {
-	let filteredPosts: Post[] = sortedPosts;
+	let filteredPosts: PostForList[] = sortedPosts;
 
 	if (tags.length > 0) {
 		filteredPosts = filteredPosts.filter(
 			(post) =>
-				Array.isArray(post.data.tags) &&
-				post.data.tags.some((tag) => tags.includes(tag)),
+				Array.isArray(post.tags) && post.tags.some((tag) => tags.includes(tag)),
 		);
 	}
 
 	if (categories.length > 0) {
 		filteredPosts = filteredPosts.filter(
-			(post) => post.data.category && categories.includes(post.data.category),
+			(post) => post.category && categories.includes(post.category),
 		);
 	}
 
 	if (uncategorized) {
-		filteredPosts = filteredPosts.filter((post) => !post.data.category);
+		filteredPosts = filteredPosts.filter((post) => !post.category);
 	}
 
 	const grouped = filteredPosts.reduce(
 		(acc, post) => {
-			const year = post.data.published.getFullYear();
+			const year = new Date(post.published_at).getFullYear();
 			if (!acc[year]) {
 				acc[year] = [];
 			}
 			acc[year].push(post);
 			return acc;
 		},
-		{} as Record<number, Post[]>,
+		{} as Record<number, PostForList[]>,
 	);
 
 	const groupedPostsArray = Object.keys(grouped).map((yearStr) => ({
@@ -106,13 +105,13 @@ onMount(async () => {
             {#each group.posts as post}
                 <a
                         href={getPostUrlBySlug(post.slug)}
-                        aria-label={post.data.title}
+                        aria-label={post.title}
                         class="group btn-plain !block h-10 w-full rounded-lg hover:text-[initial]"
                 >
                     <div class="flex flex-row justify-start items-center h-full">
                         <!-- date -->
                         <div class="w-[15%] md:w-[10%] transition text-sm text-right text-50">
-                            {formatDate(post.data.published)}
+                            {formatDate(new Date(post.published_at))}
                         </div>
 
                         <!-- dot and line -->
@@ -133,7 +132,7 @@ onMount(async () => {
                      group-hover:translate-x-1 transition-all group-hover:text-[var(--primary)]
                      text-75 pr-8 whitespace-nowrap overflow-ellipsis overflow-hidden"
                         >
-                            {post.data.title}
+                            {post.title}
                         </div>
 
                         <!-- tag list -->
@@ -141,7 +140,7 @@ onMount(async () => {
                                 class="hidden md:block md:w-[15%] text-left text-sm transition
                      whitespace-nowrap overflow-ellipsis overflow-hidden text-30"
                         >
-                            {formatTag(post.data.tags)}
+                            {formatTag(post.tags || [])}
                         </div>
                     </div>
                 </a>

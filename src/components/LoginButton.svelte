@@ -1,13 +1,12 @@
 <script lang="ts">
-    import Icon from "@iconify/svelte";
-    import { onMount } from "svelte";
-    import type { AstroCookies } from "astro";
+import Icon from "@iconify/svelte";
+import type { AstroCookies } from "astro";
+import { onMount } from "svelte";
 
-    export let accessToken: AstroCookies | undefined;
-    export let refreshToken: AstroCookies | undefined;
+export let accessToken: AstroCookies | undefined;
+export let refreshToken: AstroCookies | undefined;
 
-    onMount(() => {
-    });
+onMount(() => {});
 </script>
 
 <div>
