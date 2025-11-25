@@ -5,17 +5,16 @@ import Markdown from "@components/misc/Markdown.astro";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
-import { getSortedPosts } from "@utils/content-utils";
-import { getDir, getPostUrlBySlug } from "@utils/url-utils";
+import { getDir } from "@utils/url-utils";
 import { Icon } from "astro-icon/components";
 import { licenseConfig } from "src/config";
+import { markdownToHtml } from "@/lib/markdown-to-html";
+import { getPostBySlug, supabase } from "@/lib/supabase";
+import type { PostInfo } from "@/types/database";
 import ImageWrapper from "../../components/misc/ImageWrapper.astro";
 import PostMetadata from "../../components/PostMeta.astro";
 import { profileConfig, siteConfig } from "../../config";
 import { formatDateToYYYYMMDD } from "../../utils/date-utils";
-import { supabase } from "@/lib/supabase";
-import type { PostInfo } from "@/types/database";
-import { markdownToHtml } from "@/lib/markdown-to-html";
 
 /*export async function getStaticPaths() {
 	const blogEntries = await getSortedPosts();
@@ -30,21 +29,15 @@ import { markdownToHtml } from "@/lib/markdown-to-html";
 
 // const { remarkPluginFrontmatter } = await entry.render();
 
-const { data, error } = await supabase
-    .from("posts")
-    .select("*")
-    .eq("slug", Astro.params.slug)
-    .limit(1)
-    .single();
-const post: PostInfo = data;
+const { post, error } = await getPostBySlug(Astro.params.slug as string);
 
 if (error) {
-  console.error('Error fetching post', Astro.params.slug, ':', error.message);
+	console.error("Error fetching post", Astro.params.slug, ":", error.message);
 }
 
-const renderResult = await markdownToHtml(post.body);
+const renderResult = post && (await markdownToHtml(post.body));
 
-const jsonLd = {
+const jsonLd = post && {
 	"@context": "https://schema.org",
 	"@type": "BlogPosting",
 	headline: post.title,
@@ -62,6 +55,12 @@ const jsonLd = {
 	// TODO include cover image here
 };
 ---
+{
+    (error || !post || !renderResult) ? (
+        <MainGridLayout>
+            <p class="text-red-500">加载文章时出错: {error?.message || "文章未找到。"}</p>
+        </MainGridLayout>
+    ) : (
 <MainGridLayout banner={post.image || undefined} title={post.title} description={post.description || undefined} lang={post.lang || undefined} setOGTypeArticle={true} headings={/*headings*/[]}>
     <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
     <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative mb-4">
@@ -152,3 +151,5 @@ const jsonLd = {
     </div> -->
 
 </MainGridLayout>
+    )
+}

@@ -1,11 +1,7 @@
 ---
-import type { GetStaticPaths } from "astro";
-import Pagination from "../components/control/Pagination.astro";
+import { getAllPostsPaginated } from "@/lib/supabase";
 import PostPage from "../components/PostPage.astro";
-import { PAGE_SIZE } from "../constants/constants";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
-import { getSortedPosts } from "../utils/content-utils";
-import { supabase } from "@/lib/supabase";
 
 // export const getStaticPaths = (async ({ paginate }) => {
 // 	const allBlogPosts = await getSortedPosts();
@@ -17,15 +13,10 @@ import { supabase } from "@/lib/supabase";
 
 // const len = page.data.length;
 
-const { data: posts, error } = await supabase
-  .from('posts')
-  .select('*')
-  .eq('draft', false)
-  .order('published_at', { ascending: false })
-  .limit(PAGE_SIZE);
+const { posts, error } = await getAllPostsPaginated(0);
 
 if (error) {
-  console.error('Error fetching posts:', error.message);
+	console.error("Error fetching posts:", error.message);
 }
 
 const len = posts ? posts.length : 0;
@@ -33,7 +24,7 @@ const len = posts ? posts.length : 0;
 
 <MainGridLayout>
     {
-        error
+        (error || !posts)
             ? <p class="text-red-500">加载文章时出错: {error?.message}</p>
             : (
             <PostPage posts={posts}></PostPage>
