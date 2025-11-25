@@ -1,19 +1,18 @@
 ---
-import type { CollectionEntry } from "astro:content";
 import path from "node:path";
 import { Icon } from "astro-icon/components";
+import { markdownToHtml } from "@/lib/markdown-to-html";
+import type { PostInfo } from "@/types/database";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 import { getDir } from "../utils/url-utils";
 import ImageWrapper from "./misc/ImageWrapper.astro";
 import PostMetadata from "./PostMeta.astro";
-import type { PostInfo } from "@/types/database";
-import { markdownToHtml } from "@/lib/markdown-to-html";
 
 interface Props {
 	class?: string;
 	// entry: CollectionEntry<"posts">;
-    entry: PostInfo;
+	entry: PostInfo;
 	title: string;
 	url: string;
 	published: Date;
@@ -24,7 +23,7 @@ interface Props {
 	description: string;
 	draft: boolean;
 	style: string;
-    body: string;
+	body: string;
 }
 const {
 	entry,
@@ -37,7 +36,7 @@ const {
 	image,
 	description,
 	style,
-    body,
+	body,
 } = Astro.props;
 const className = Astro.props.class;
 
