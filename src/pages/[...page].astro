@@ -19,10 +19,11 @@ if (error) {
 	console.error("Error fetching posts:", error.message);
 }
 
-const len = posts ? posts.length : 0;
+// const len = posts ? posts.length : 0;
 ---
 
 <MainGridLayout>
+    {/* TODO: implement pagination */}
     {
         (error || !posts)
             ? <p class="text-red-500">加载文章时出错: {error?.message}</p>
