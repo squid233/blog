@@ -59,7 +59,8 @@ export async function getSortedPostsList(): Promise<PostForList[]> {
 	// return sortedPostsList;
 	let filter = supabase
 		.from("posts")
-		.select("slug, published_at, draft, title, category, tags");
+		.select("slug, published_at, draft, title, category, tags, deleted")
+		.eq("deleted", false);
 	if (import.meta.env.PROD) {
 		filter = filter.eq("draft", false);
 	}

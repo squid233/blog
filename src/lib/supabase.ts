@@ -20,7 +20,7 @@ export type GetPostBySlugResult = {
 export async function getAllPostsPaginated(
 	_page: number,
 ): Promise<GetAllPostsResult> {
-	let filter = supabase.from("posts").select("*");
+	let filter = supabase.from("posts").select("*").eq("deleted", false);
 	if (import.meta.env.PROD) {
 		filter = filter.eq("draft", false);
 	}
@@ -31,7 +31,7 @@ export async function getAllPostsPaginated(
 }
 
 export async function getAllPosts(): Promise<GetAllPostsResult> {
-	let filter = supabase.from("posts").select("*");
+	let filter = supabase.from("posts").select("*").eq("deleted", false);
 	if (import.meta.env.PROD) {
 		filter = filter.eq("draft", false);
 	}
@@ -47,6 +47,7 @@ export async function getPostBySlug(
 	const { data: posts, error } = await supabase
 		.from("posts")
 		.select("*")
+		.eq("deleted", false)
 		.eq("slug", slug)
 		.limit(1);
 	if (posts && posts.length > 0) {

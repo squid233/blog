@@ -1,13 +1,14 @@
 <script lang="ts">
-import type { PostForList } from "@utils/content-utils";
+import { getSortedPostsList, type PostForList } from "@utils/content-utils";
 import { onMount } from "svelte";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 import { getPostUrlBySlug } from "../utils/url-utils";
 
-export let tags: string[];
-export let categories: string[];
-export let sortedPosts: PostForList[] = [];
+// export let tags: string[];
+// export let categories: string[];
+let tags: string[];
+let categories: string[];
 
 const params = new URLSearchParams(window.location.search);
 tags = params.has("tag") ? params.getAll("tag") : [];
@@ -41,7 +42,10 @@ function formatTag(tagList: string[]) {
 	return tagList.map((t) => `#${t}`).join(" ");
 }
 
+let isLoading = true;
+
 onMount(async () => {
+	const sortedPosts = await getSortedPostsList();
 	let filteredPosts: PostForList[] = sortedPosts;
 
 	if (tags.length > 0) {
@@ -81,9 +85,14 @@ onMount(async () => {
 	groupedPostsArray.sort((a, b) => b.year - a.year);
 
 	groups = groupedPostsArray;
+
+	isLoading = false;
 });
 </script>
 
+{#if isLoading}
+<p class="text-black dark:text-white">加载中……</p>
+{:else}
 <div class="card-base px-8 py-6">
     {#each groups as group}
         <div>
@@ -133,6 +142,9 @@ onMount(async () => {
                      text-75 pr-8 whitespace-nowrap overflow-ellipsis overflow-hidden"
                         >
                             {post.title}
+                            {#if post.draft}
+                                <span class="text-gray-500">(DRAFT)</span>
+                            {/if}
                         </div>
 
                         <!-- tag list -->
@@ -148,3 +160,4 @@ onMount(async () => {
         </div>
     {/each}
 </div>
+{/if}

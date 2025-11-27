@@ -5,24 +5,19 @@ import { onMount } from "svelte";
 
 export let accessToken: AstroCookies | undefined;
 export let refreshToken: AstroCookies | undefined;
+let isLoggedIn = accessToken && refreshToken;
 
 onMount(() => {});
 </script>
 
 <div>
-    {#if accessToken && refreshToken}
-    <button aria-label="Dashboard" name="Dashboard" class="btn-plain scale-animation rounded-lg w-11 h-11 active:scale-90" id="nav-dashboard"
+    <button aria-label={isLoggedIn ? "Dashboard" : "Log in"}
+            name={isLoggedIn ? "Dashboard" : "Log in"}
+            class="btn-plain scale-animation rounded-lg w-11 h-11 active:scale-90"
+            id={isLoggedIn ? "nav-dashboard" : "nav-log-in"}
         on:click={() => {
-            window.location.href = "/dashboard";
+            window.location.href = isLoggedIn ? "/dashboard" : "/signin";
         }}>
-        <Icon icon="material-symbols:account-circle" class="text-[1.25rem]"></Icon>
+        <Icon icon={isLoggedIn ? "material-symbols:account-circle" : "material-symbols:login-rounded"} class="text-[1.25rem]"></Icon>
     </button>
-    {:else}
-    <button aria-label="Log in" name="Log in" class="btn-plain scale-animation rounded-lg w-11 h-11 active:scale-90" id="nav-log-in"
-        on:click={() => {
-            window.location.href = "/signin";
-        }}>
-        <Icon icon="material-symbols:login-rounded" class="text-[1.25rem]"></Icon>
-    </button>
-    {/if}
 </div>
