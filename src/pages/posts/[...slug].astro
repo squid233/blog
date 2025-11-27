@@ -57,10 +57,10 @@ const jsonLd = post && {
 {
     (error || !post || !renderResult) ? (
         <MainGridLayout>
-            <p class="text-red-500">加载文章时出错: {error?.message || "文章未找到。"}</p>
+            <p class="text-red-500">加载页面时出错: {error?.message || "页面未找到。"}</p>
         </MainGridLayout>
     ) : (
-<MainGridLayout banner={post.image || undefined} title={post.title} description={post.description || undefined} lang={post.lang || undefined} setOGTypeArticle={true} headings={/*headings*/[]}>
+<MainGridLayout banner={post.image || undefined} title={post.title} description={post.description || undefined} lang={post.lang || undefined} setOGTypeArticle={true} headings={renderResult.headings}>
     <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
     <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative mb-4">
         <div id="post-container" class:list={["card-base z-10 px-6 md:px-9 pt-6 pb-4 relative w-full ",

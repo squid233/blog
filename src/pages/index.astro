@@ -1,6 +1,6 @@
 ---
-import { getAllPostsPaginated } from "@/lib/supabase";
-import PostPage from "../components/PostPage.astro";
+import IndexContent from "@components/dyn_page/IndexContent.astro";
+import Markdown from "@components/misc/Markdown.astro";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
 
 // export const getStaticPaths = (async ({ paginate }) => {
@@ -13,25 +13,16 @@ import MainGridLayout from "../layouts/MainGridLayout.astro";
 
 // const len = page.data.length;
 
-const { posts, error } = await getAllPostsPaginated(0);
-
-if (error) {
-	console.error("Error fetching posts:", error.message);
-}
-
 // const len = posts ? posts.length : 0;
 ---
 
 <MainGridLayout>
     {/* TODO: implement pagination */}
-    {
-        (error || !posts)
-            ? <p class="text-red-500">加载文章时出错: {error?.message}</p>
-            : (
-            <PostPage posts={posts}></PostPage>
-            // <Pagination class="mx-auto onload-animation" posts={posts} style={`animation-delay: calc(var(--content-delay) + ${(len)*50}ms)`}></Pagination>
-            )
-    }
+    <IndexContent server:defer>
+        <Markdown class="mt-2" slot="fallback">
+            <p>加载中……</p>
+        </Markdown>
+    </IndexContent>
     {/*
     <PostPage page={page}></PostPage>
     <Pagination class="mx-auto onload-animation" page={page} style={`animation-delay: calc(var(--content-delay) + ${(len)*50}ms)`}></Pagination>

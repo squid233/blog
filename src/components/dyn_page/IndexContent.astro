@@ -1,0 +1,17 @@
+---
+import PostPage from "@components/PostPage.astro";
+import { getAllPostsPaginated } from "@/lib/supabase";
+
+const { posts, error } = await getAllPostsPaginated(0);
+
+if (error) {
+	console.error("Error fetching posts:", error.message);
+}
+---
+
+{(error || !posts)
+    ? <p class="text-red-500">加载页面时出错: {error?.message}</p>
+    : (
+    <PostPage posts={posts}></PostPage>
+    // <Pagination class="mx-auto onload-animation" posts={posts} style={`animation-delay: calc(var(--content-delay) + ${(len)*50}ms)`}></Pagination>
+    )}
