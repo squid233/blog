@@ -63,7 +63,7 @@ const search = async (keyword: string, isDesktop: boolean): Promise<void> => {
 	try {
 		let searchResults: SearchResult[] = [];
 
-		if (import.meta.env.PROD && pagefindLoaded && window.pagefind) {
+		/*if (import.meta.env.PROD && pagefindLoaded && window.pagefind) {
 			const response = await window.pagefind.search(keyword);
 			searchResults = await Promise.all(
 				response.results.map((item) => item.data()),
@@ -73,7 +73,7 @@ const search = async (keyword: string, isDesktop: boolean): Promise<void> => {
 		} else {
 			searchResults = [];
 			console.error("Pagefind is not available in production environment.");
-		}
+		}*/
 
 		result = searchResults;
 		setPanelVisibility(result.length > 0, isDesktop);
@@ -89,10 +89,11 @@ const search = async (keyword: string, isDesktop: boolean): Promise<void> => {
 onMount(() => {
 	const initializeSearch = () => {
 		initialized = true;
-		pagefindLoaded =
+		/*pagefindLoaded =
 			typeof window !== "undefined" &&
 			!!window.pagefind &&
-			typeof window.pagefind.search === "function";
+			typeof window.pagefind.search === "function";*/
+		pagefindLoaded = false;
 		console.log("Pagefind status on init:", pagefindLoaded);
 		if (keywordDesktop) search(keywordDesktop, true);
 		if (keywordMobile) search(keywordMobile, false);
